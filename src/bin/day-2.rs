@@ -1,16 +1,37 @@
 fn main() {
-    let mut results: Vec<u64> = include_str!("../../day2_input")
-        .split("\n\n")
-        .into_iter()
-        .map(|calories_str| {
-            calories_str
-                .split("\n")
-                .map(|x| x.parse::<u64>().unwrap_or(0))
-                .sum::<u64>()
+    let part_1_result = include_str!("../../day2_input")
+        .lines()
+        .map(|line| match line {
+            "A X" => 1 + 3,
+            "A Y" => 2 + 6,
+            "A Z" => 3 + 0,
+            "B X" => 1 + 0,
+            "B Y" => 2 + 3,
+            "B Z" => 3 + 6,
+            "C X" => 1 + 6,
+            "C Y" => 2 + 0,
+            "C Z" => 3 + 3,
+            _ => panic!("heh dumb you"),
         })
-        .collect();
+        .sum::<u64>();
 
-    results.sort_unstable_by(|a, b| b.cmp(a));
+    println!("{}", part_1_result);
 
-    println!("{}", results.iter().take(3).sum::<u64>());
+    let part_two_result = include_str!("../../day2_input")
+        .lines()
+        .map(|line| match line {
+            "A X" => 3 + 0,
+            "A Y" => 1 + 3,
+            "A Z" => 2 + 6,
+            "B X" => 1 + 0,
+            "B Y" => 2 + 3,
+            "B Z" => 3 + 6,
+            "C X" => 2 + 0,
+            "C Y" => 3 + 3,
+            "C Z" => 1 + 6,
+            _ => panic!("heh dumb you"),
+        })
+        .sum::<u64>();
+
+    println!("{}", part_two_result);
 }
