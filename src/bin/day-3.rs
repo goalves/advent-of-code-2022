@@ -32,25 +32,31 @@ impl<'a> Knapsack<'a> {
         self.first_half.contains(item) || self.second_half.contains(item)
     }
 
-    pub fn backpack(&self) -> String {
-        format!("{}{}", self.first_half, self.second_half)
+    pub fn backpack(&self) -> (&str, &str) {
+        (self.first_half, self.second_half)
     }
 }
 
 #[derive(Debug)]
 struct KnapsackGroup<'a> {
-    knapsacks: Vec<Knapsack<'a>>,
+    knapsacks: Vec<&'a Knapsack<'a>>,
 }
 
-impl<'a> From<Vec<Knapsack<'a>>> for KnapsackGroup<'a> {
-    fn from(value: Vec<Knapsack<'a>>) -> Self {
+impl<'a> From<Vec<&'a Knapsack<'a>>> for KnapsackGroup<'a> {
+    fn from(value: Vec<&'a Knapsack<'a>>) -> Self {
         Self { knapsacks: value }
     }
 }
 
 impl<'a> KnapsackGroup<'a> {
     pub fn find_badge(&self) -> char {
-        for char in self.knapsacks[0].backpack().as_str().chars() {
+        let iter = self.knapsacks[0]
+            .backpack()
+            .0
+            .chars()
+            .chain(self.knapsacks[0].backpack().1.chars());
+
+        for char in iter {
             if self.knapsacks[1].has_item(char) && self.knapsacks[2].has_item(char) {
                 return char;
             }
@@ -80,35 +86,39 @@ fn build_knapsacks(data: &str) -> Vec<Knapsack> {
     data.lines().map(|line| Knapsack::from(line)).collect()
 }
 
-fn calculate_badges_from_knapsacks(knapsacks: Vec<Knapsack>) -> Vec<Priority> {
-    let mut priorities = Vec::new();
+fn find_repeated_from_knapsacks(knapsacks: &Vec<Knapsack>) -> Vec<Priority> {
+    knapsacks
+        .iter()
+        .map(|knapsack| knapsack.find_repeated())
+        .map(|char| Priority::from(char))
+        .collect()
+}
 
-    for chunk in &knapsacks.into_iter().chunks(3) {
-        let knapsack_group = KnapsackGroup::from(chunk.collect::<Vec<Knapsack>>());
-        let badge = knapsack_group.find_badge();
+fn calculate_badges_from_knapsacks(knapsacks: &Vec<Knapsack>) -> Vec<Priority> {
+    knapsacks
+        .into_iter()
+        .chunks(3)
+        .into_iter()
+        .map(|chunk| {
+            let knapsack_group = KnapsackGroup::from(chunk.collect::<Vec<&Knapsack>>());
+            let badge = knapsack_group.find_badge();
 
-        priorities.push(Priority::from(badge));
-    }
-
-    priorities
+            Priority::from(badge)
+        })
+        .collect::<Vec<Priority>>()
 }
 
 fn main() {
     let input_data = include_str!("../../day3_input");
     let knapsacks = build_knapsacks(input_data);
 
-    let mut priorities: Vec<Priority> = knapsacks
-        .iter()
-        .map(|knapsack| knapsack.find_repeated())
-        .map(|char| Priority::from(char))
-        .collect();
-
+    let mut priorities: Vec<Priority> = find_repeated_from_knapsacks(&knapsacks);
     println!(
         "first phase: {:?}",
         priorities.iter().map(|x| x.0).sum::<u32>()
     );
 
-    priorities = calculate_badges_from_knapsacks(knapsacks);
+    priorities = calculate_badges_from_knapsacks(&knapsacks);
     println!(
         "second phase: {:?}",
         priorities.iter().map(|x| x.0).sum::<u32>()
@@ -126,12 +136,7 @@ mod tests {
 
         assert_eq!(knapsacks.len(), 6);
 
-        let priorities: Vec<Priority> = knapsacks
-            .iter()
-            .map(|knapsack| knapsack.find_repeated())
-            .map(|char| Priority::from(char))
-            .collect();
-
+        let priorities: Vec<Priority> = find_repeated_from_knapsacks(&knapsacks);
         assert_eq!(157, priorities.iter().map(|x| x.0).sum::<u32>());
     }
 
@@ -141,7 +146,7 @@ mod tests {
         let knapsacks = build_knapsacks(test_data);
         assert_eq!(knapsacks.len(), 6);
 
-        let priorities = calculate_badges_from_knapsacks(knapsacks);
+        let priorities = calculate_badges_from_knapsacks(&knapsacks);
         assert_eq!(70, priorities.iter().map(|x| x.0).sum::<u32>());
     }
 }
