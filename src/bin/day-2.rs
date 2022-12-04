@@ -4,12 +4,12 @@ fn main() {
         .map(|line| match line {
             "A X" => 1 + 3,
             "A Y" => 2 + 6,
-            "A Z" => 3 + 0,
-            "B X" => 1 + 0,
+            "A Z" => 3,
+            "B X" => 1,
             "B Y" => 2 + 3,
             "B Z" => 3 + 6,
             "C X" => 1 + 6,
-            "C Y" => 2 + 0,
+            "C Y" => 2,
             "C Z" => 3 + 3,
             _ => panic!("heh dumb you"),
         })
@@ -20,13 +20,13 @@ fn main() {
     let part_two_result = include_str!("../../day2_input")
         .lines()
         .map(|line| match line {
-            "A X" => 3 + 0,
+            "A X" => 3,
             "A Y" => 1 + 3,
             "A Z" => 2 + 6,
-            "B X" => 1 + 0,
+            "B X" => 1,
             "B Y" => 2 + 3,
             "B Z" => 3 + 6,
-            "C X" => 2 + 0,
+            "C X" => 2,
             "C Y" => 3 + 3,
             "C Z" => 1 + 6,
             _ => panic!("heh dumb you"),

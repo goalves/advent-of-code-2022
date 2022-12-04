@@ -4,7 +4,7 @@ fn main() {
         .into_iter()
         .map(|calories_str| {
             calories_str
-                .split("\n")
+                .split('\n')
                 .map(|x| x.parse::<u64>().unwrap_or(0))
                 .sum::<u64>()
         })

@@ -73,9 +73,9 @@ impl From<char> for Priority {
     fn from(value: char) -> Self {
         let mut digit = value as u32;
         if digit >= 97 {
-            digit = digit - 96;
+            digit -= 96;
         } else {
-            digit = digit - 38;
+            digit -= 38;
         }
 
         Priority(digit)
@@ -83,20 +83,20 @@ impl From<char> for Priority {
 }
 
 fn build_knapsacks(data: &str) -> Vec<Knapsack> {
-    data.lines().map(|line| Knapsack::from(line)).collect()
+    data.lines().map(Knapsack::from).collect()
 }
 
-fn find_repeated_from_knapsacks(knapsacks: &Vec<Knapsack>) -> Vec<Priority> {
+fn find_repeated_from_knapsacks(knapsacks: &[Knapsack]) -> Vec<Priority> {
     knapsacks
         .iter()
         .map(|knapsack| knapsack.find_repeated())
-        .map(|char| Priority::from(char))
+        .map(Priority::from)
         .collect()
 }
 
-fn calculate_badges_from_knapsacks(knapsacks: &Vec<Knapsack>) -> Vec<Priority> {
+fn calculate_badges_from_knapsacks(knapsacks: &[Knapsack]) -> Vec<Priority> {
     knapsacks
-        .into_iter()
+        .iter()
         .chunks(3)
         .into_iter()
         .map(|chunk| {
