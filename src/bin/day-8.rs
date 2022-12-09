@@ -88,12 +88,15 @@ fn tree_scenic_score(
     col_step: i32,
     data: &Vec<Vec<Tree>>,
 ) -> u32 {
+    let row_len = data.len();
+    let col_len = data[0].len();
     let height = data[row][col].heigth;
+
     let mut x = row as i32 + row_step;
     let mut y = col as i32 + col_step;
     let mut score = 0;
 
-    while x >= 0 && x < data.len() as i32 && y >= 0 && y < data[0].len() as i32 {
+    while x >= 0 && x < row_len as i32 && y >= 0 && y < col_len as i32 {
         score += 1;
 
         if data[x as usize][y as usize].heigth >= height {
@@ -114,16 +117,14 @@ fn calculate_scenic_score(data: &mut Vec<Vec<Tree>>) -> u32 {
 
     for row in 0..row_len {
         for col in 0..col_len {
-            if row != 0 && col != 0 && row != row_len - 1 && col != col_len - 1 {
-                let scores = vec![
-                    tree_scenic_score(row, col, -1, 0, data),
-                    tree_scenic_score(row, col, 1, 0, data),
-                    tree_scenic_score(row, col, 0, -1, data),
-                    tree_scenic_score(row, col, 0, 1, data),
-                ];
+            let scores = vec![
+                tree_scenic_score(row, col, -1, 0, data),
+                tree_scenic_score(row, col, 1, 0, data),
+                tree_scenic_score(row, col, 0, -1, data),
+                tree_scenic_score(row, col, 0, 1, data),
+            ];
 
-                max_score = max(max_score, scores.iter().product());
-            }
+            max_score = max(max_score, scores.iter().product());
         }
     }
 
