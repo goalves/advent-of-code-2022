@@ -59,16 +59,13 @@ fn main() {
         .map(|pair| u32::from(pair.has_self_containment()))
         .sum::<u32>();
 
-    println!(
-        "Number of elf pairs with full containments: {}",
-        first_phase
-    );
+    println!("Number of elf pairs with full containments: {first_phase}");
 
     let second_phase = elf_pairs
         .map(|pair| u32::from(pair.has_overlaps()))
         .sum::<u32>();
 
-    println!("Number of elf pairs with overlaps: {}", second_phase);
+    println!("Number of elf pairs with overlaps: {second_phase}");
 }
 
 #[cfg(test)]

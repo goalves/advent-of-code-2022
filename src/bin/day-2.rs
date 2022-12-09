@@ -15,7 +15,7 @@ fn main() {
         })
         .sum::<u64>();
 
-    println!("{}", part_1_result);
+    println!("{part_1_result}");
 
     let part_two_result = include_str!("../../day2_input")
         .lines()
@@ -33,5 +33,5 @@ fn main() {
         })
         .sum::<u64>();
 
-    println!("{}", part_two_result);
+    println!("{part_two_result}");
 }

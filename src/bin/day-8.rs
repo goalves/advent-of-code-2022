@@ -116,10 +116,10 @@ fn calculate_scenic_score(data: &mut Vec<Vec<Tree>>) -> u32 {
         for col in 0..col_len {
             if row != 0 && col != 0 && row != row_len - 1 && col != col_len - 1 {
                 let scores = vec![
-                    tree_scenic_score(row, col, -1, 0, &data),
-                    tree_scenic_score(row, col, 1, 0, &data),
-                    tree_scenic_score(row, col, 0, -1, &data),
-                    tree_scenic_score(row, col, 0, 1, &data),
+                    tree_scenic_score(row, col, -1, 0, data),
+                    tree_scenic_score(row, col, 1, 0, data),
+                    tree_scenic_score(row, col, 0, -1, data),
+                    tree_scenic_score(row, col, 0, 1, data),
                 ];
 
                 max_score = max(max_score, scores.iter().product());
@@ -146,8 +146,8 @@ fn main() {
 
     fill_cost_heigths(&mut data);
     let total_trees = total_visible_trees(&data);
-    println!("{}", total_trees);
+    println!("{total_trees}");
 
     let total_scenic_score = calculate_scenic_score(&mut data);
-    println!("{}", total_scenic_score);
+    println!("{total_scenic_score}");
 }

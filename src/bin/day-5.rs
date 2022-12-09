@@ -40,7 +40,7 @@ fn build_moves_from_input(input: Lines) -> Vec<Move> {
     moves
 }
 
-fn apply_moves(stacks: &mut Vec<Stack>, moves: Vec<Move>) {
+fn apply_moves(stacks: &mut [Stack], moves: Vec<Move>) {
     for action in moves {
         for _ in 0..action.count {
             let value = &mut stacks[action.from - 1].crates.pop_front().unwrap();
@@ -49,7 +49,7 @@ fn apply_moves(stacks: &mut Vec<Stack>, moves: Vec<Move>) {
     }
 }
 
-fn apply_moves_crate_mover_9001(stacks: &mut Vec<Stack>, moves: Vec<Move>) {
+fn apply_moves_crate_mover_9001(stacks: &mut [Stack], moves: Vec<Move>) {
     for action in moves {
         let mut values = Vec::new();
         for _ in 0..action.count {

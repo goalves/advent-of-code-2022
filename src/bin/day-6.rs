@@ -4,12 +4,12 @@ fn find_sequence(data: &str, expected_length: usize) -> usize {
     let chars: Vec<char> = data.chars().collect();
     let mut packets = VecDeque::new();
 
-    for index in 0..chars.len() {
+    for (index, char) in chars.iter().enumerate() {
         if packets.len() == expected_length {
             return index;
         }
 
-        while packets.contains(&chars[index]) {
+        while packets.contains(char) {
             packets.pop_front();
         }
 
@@ -21,10 +21,10 @@ fn find_sequence(data: &str, expected_length: usize) -> usize {
 
 fn main() {
     let lenght_4 = find_sequence(include_str!("../../day6_input"), 4);
-    println!("{}", lenght_4);
+    println!("{lenght_4}");
 
     let length_14 = find_sequence(include_str!("../../day6_input"), 14);
-    println!("{}", length_14);
+    println!("{length_14}");
 }
 
 #[cfg(test)]
