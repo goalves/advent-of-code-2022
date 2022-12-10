@@ -26,10 +26,8 @@ fn main() {
             knots[len - 1].1 += direction_vector.1;
 
             for index in (0..knots.len() - 1).rev() {
-                if let Some(tail_move) =
-                    tail_move(&knots[index as usize], &knots[index as usize + 1])
-                {
-                    knots[index as usize] = tail_move;
+                if let Some(tail_move) = tail_move(&knots[index], &knots[index + 1]) {
+                    knots[index] = tail_move;
                     tail_visits.push(knots[0])
                 };
             }
