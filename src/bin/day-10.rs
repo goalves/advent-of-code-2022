@@ -28,6 +28,7 @@ impl From<&str> for Command {
 pub struct Machine {
     x_register: i32,
     commands: Vec<Command>,
+    signal_strenghts: Vec<i32>,
 }
 
 impl Machine {
@@ -35,6 +36,7 @@ impl Machine {
         Self {
             x_register: 1,
             commands,
+            signal_strenghts: Vec::new(),
         }
     }
 
@@ -58,6 +60,11 @@ impl Machine {
         while current_cycle < what_finishes_on_each_cycle.len() {
             current_cycle += 1;
 
+            if (current_cycle + 20) % 40 == 0 {
+                self.signal_strenghts
+                    .push((current_cycle as i32) * self.x_register);
+            }
+
             draw_crt(&mut crt_index, &mut sprite_index);
 
             if let Some(Some(Command::Add(value))) =
@@ -67,6 +74,8 @@ impl Machine {
                 sprite_index = self.x_register;
             }
         }
+
+        println!();
     }
 }
 
@@ -92,4 +101,6 @@ fn main() {
     let mut machine = Machine::new(commands);
 
     machine.run();
+
+    println!("Signal strenghts: {:?}", machine.signal_strenghts);
 }
