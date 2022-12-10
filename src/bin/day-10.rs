@@ -16,7 +16,7 @@ impl Command {
 impl From<&str> for Command {
     fn from(value: &str) -> Self {
         if value == "noop" {
-            return Command::NoOp;
+            Command::NoOp
         } else {
             let input: Vec<&str> = value.split(' ').collect();
             Command::Add(input[1].parse::<i32>().unwrap())
@@ -43,10 +43,10 @@ impl Machine {
 
         for command in &self.commands {
             match command {
-                Command::NoOp => what_finishes_on_each_cycle.push(Some(&command)),
+                Command::NoOp => what_finishes_on_each_cycle.push(Some(command)),
                 Command::Add(_) => {
                     what_finishes_on_each_cycle.push(None);
-                    what_finishes_on_each_cycle.push(Some(&command));
+                    what_finishes_on_each_cycle.push(Some(command));
                 }
             }
         }
@@ -72,7 +72,7 @@ impl Machine {
 
 fn draw_crt(crt_index: &mut i32, sprite_index: &mut i32) {
     if *crt_index == 40 {
-        print!("\n");
+        println!();
         *crt_index = 0;
     }
 
