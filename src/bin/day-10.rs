@@ -38,7 +38,7 @@ impl Machine {
         }
     }
 
-    pub fn run(&mut self) -> Vec<i32> {
+    pub fn run(&mut self) {
         let mut what_finishes_on_each_cycle: Vec<Option<&Command>> = vec![];
 
         for command in &self.commands {
@@ -51,33 +51,38 @@ impl Machine {
             }
         }
 
-        println!("what finishes: {:?}", what_finishes_on_each_cycle);
-
-        let mut signal_strenghts = vec![];
         let mut current_cycle = 0;
+        let mut crt_index = 0;
+        let mut sprite_index = 0i32;
+
         while current_cycle < what_finishes_on_each_cycle.len() {
-            println!("running current cycle: {}", current_cycle);
             current_cycle += 1;
-            if current_cycle == 20 || (current_cycle >= 20 && (current_cycle - 20) % 40 == 0) {
-                println!(
-                    "pushing: {}, {}, total: {} \n",
-                    current_cycle,
-                    self.x_register,
-                    current_cycle as i32 * self.x_register
-                );
-                signal_strenghts.push((current_cycle as i32) * self.x_register);
-            }
+
+            draw_crt(&mut crt_index, &mut sprite_index);
 
             if let Some(Some(Command::Add(value))) =
                 what_finishes_on_each_cycle.get(current_cycle - 1)
             {
-                println!("summing up {:?}, self reg: {}", value, self.x_register);
                 self.x_register += value;
+                sprite_index = self.x_register;
             }
         }
-
-        signal_strenghts
     }
+}
+
+fn draw_crt(crt_index: &mut i32, sprite_index: &mut i32) {
+    if *crt_index == 40 {
+        print!("\n");
+        *crt_index = 0;
+    }
+
+    if (*crt_index - *sprite_index).abs() < 2 {
+        print!("#")
+    } else {
+        print!(".")
+    }
+
+    *crt_index += 1;
 }
 
 fn main() {
@@ -86,7 +91,5 @@ fn main() {
     let commands: Vec<Command> = input.lines().map(Command::from).collect();
     let mut machine = Machine::new(commands);
 
-    let signal_strenghts = machine.run();
-    println!("{:?}", signal_strenghts.iter().sum::<i32>());
-    println!("{:?}", machine);
+    machine.run();
 }
