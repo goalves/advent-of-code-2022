@@ -3,12 +3,12 @@ use std::collections::VecDeque;
 
 #[derive(Debug)]
 pub struct Monkey {
-    items: VecDeque<i64>,
+    items: VecDeque<u64>,
     operation: String,
     test_disivible: u32,
     true_case_throw: usize,
     false_case_throw: usize,
-    inspected_items: u32,
+    inspected_items: u64,
 }
 
 fn main() {
@@ -17,7 +17,7 @@ fn main() {
     let mut monkeys: Vec<Monkey> = build_monkeys(input);
 
     println!("{:?}", monkeys);
-    start_game(20, &mut monkeys);
+    start_game(10000, &mut monkeys);
 
     println!("{:?}", monkeys);
 
@@ -29,7 +29,7 @@ fn main() {
             .iter()
             .take(2)
             .map(|x| x.inspected_items)
-            .product::<u32>()
+            .product::<u64>()
     );
 }
 
@@ -39,12 +39,12 @@ fn build_monkeys(input: &str) -> Vec<Monkey> {
         .map(|monkey_lines| {
             let split_lines: Vec<&str> = monkey_lines.lines().collect();
 
-            let items: VecDeque<i64> = split_lines[1]
+            let items: VecDeque<u64> = split_lines[1]
                 .split("Starting items: ")
                 .nth(1)
                 .unwrap()
                 .split(", ")
-                .map(|x| x.parse::<i64>().unwrap())
+                .map(|x| x.parse::<u64>().unwrap())
                 .collect();
 
             let operation = split_lines[2].split("= ").nth(1).unwrap().into();
@@ -84,30 +84,25 @@ fn build_monkeys(input: &str) -> Vec<Monkey> {
 fn start_game(iterations: usize, monkeys: &mut Vec<Monkey>) {
     let mut round = 0;
     let mut turn = 0;
+    let modulus = monkeys
+        .iter()
+        .map(|x| x.test_disivible as i64)
+        .product::<i64>();
 
     while round < iterations {
         while let Some(item) = monkeys[turn].items.pop_front() {
             monkeys[turn].inspected_items += 1;
-            // apply function on item value
             let func = monkeys[turn].operation.replace("old", &item.to_string());
-
-            // get bored, divide by 3 and round up
-            let result = eval_int(&func).unwrap() / 3;
-            if result < 0 {
-                panic!(
-                    "result should never be negative: {}, func {}/3, item was {}",
-                    result, func, item
-                )
-            }
-
-            // push to other monkey
-            let mut receiving_monkey_index = monkeys[turn].false_case_throw;
+            let result = eval_int(&func).unwrap();
+            let mut recv_index = monkeys[turn].false_case_throw;
 
             if result % monkeys[turn].test_disivible as i64 == 0 {
-                receiving_monkey_index = monkeys[turn].true_case_throw;
+                recv_index = monkeys[turn].true_case_throw;
             }
 
-            monkeys[receiving_monkey_index].items.push_back(result);
+            monkeys[recv_index]
+                .items
+                .push_back((result % modulus) as u64);
         }
         turn += 1;
         if turn == monkeys.len() {
