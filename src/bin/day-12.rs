@@ -8,6 +8,8 @@ fn main() {
 
     let mut starting_point = (0, 0);
     let mut finish_point = (0, 0);
+    let mut lowest_points = Vec::new();
+    lowest_points.push(starting_point);
 
     let field: Vec<Vec<u8>> = input
         .lines()
@@ -23,6 +25,9 @@ fn main() {
                         finish_point = (x, y);
                         26
                     } else {
+                        if letter == 'a' {
+                            lowest_points.push((x, y))
+                        }
                         letter as u8 - 96
                     }
                 })
@@ -36,7 +41,16 @@ fn main() {
         starting_point, finish_point
     );
 
-    println!("{}", dfs(&field, starting_point, finish_point));
+    println!("first phase: {}", dfs(&field, starting_point, finish_point));
+
+    println!(
+        "second phase: {}",
+        lowest_points
+            .into_iter()
+            .map(|point| dfs(&field, point, finish_point))
+            .min()
+            .unwrap()
+    );
 }
 
 fn dfs(field: &Vec<Vec<u8>>, start: (usize, usize), finish: (usize, usize)) -> usize {
