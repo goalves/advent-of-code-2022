@@ -6,52 +6,40 @@ fn main() {
     let input = include_str!("../../day12_input");
     // let input = include_str!("../../test_inputs/day12_test");
 
-    let field: Vec<Vec<u32>> = input
-        .lines()
-        .map(|line| {
-            line.chars()
-                .map(|x| {
-                    if x == 'S' {
-                        0
-                    } else if x == 'E' {
-                        27
-                    } else {
-                        x as u32 - 96
-                    }
-                })
-                .collect::<Vec<u32>>()
-        })
-        .collect::<Vec<Vec<u32>>>()
-        .into();
-
-    println!("{}", input);
-    println!("{:?}", field);
-
     let mut starting_point = (0, 0);
     let mut finish_point = (0, 0);
 
-    for i in 0..field.len() {
-        for j in 0..field[0].len() {
-            if field[i][j] == 0 {
-                starting_point = (i, j);
-            }
-            if field[i][j] == 27 {
-                finish_point = (i, j);
-            }
-        }
-    }
+    let field: Vec<Vec<u8>> = input
+        .lines()
+        .enumerate()
+        .map(|(x, line)| {
+            line.chars()
+                .enumerate()
+                .map(|(y, letter)| {
+                    if letter == 'S' {
+                        starting_point = (x, y);
+                        0
+                    } else if letter == 'E' {
+                        finish_point = (x, y);
+                        26
+                    } else {
+                        letter as u8 - 96
+                    }
+                })
+                .collect::<Vec<u8>>()
+        })
+        .collect::<Vec<Vec<u8>>>()
+        .into();
 
     println!(
         "Starting point: {:?}, Finishing point: {:?}",
         starting_point, finish_point
     );
 
-    print_field(&field);
-
     println!("{}", dfs(&field, starting_point, finish_point));
 }
 
-fn dfs(field: &Vec<Vec<u32>>, start: (usize, usize), finish: (usize, usize)) -> usize {
+fn dfs(field: &Vec<Vec<u8>>, start: (usize, usize), finish: (usize, usize)) -> usize {
     let mut to_visit = VecDeque::new();
     to_visit.push_back((start, 0));
 
@@ -62,10 +50,7 @@ fn dfs(field: &Vec<Vec<u32>>, start: (usize, usize), finish: (usize, usize)) -> 
             continue;
         }
 
-        println!("current new node: {:?} on step count: {}", node, step_count);
-
         if node == finish {
-            println!("node{:?}: len of visited {}", node, visited.len());
             return step_count;
         }
 
@@ -81,7 +66,7 @@ fn dfs(field: &Vec<Vec<u32>>, start: (usize, usize), finish: (usize, usize)) -> 
     return usize::MAX;
 }
 
-fn get_neighbors(field: &Vec<Vec<u32>>, node: (usize, usize)) -> Vec<(usize, usize)> {
+fn get_neighbors(field: &Vec<Vec<u8>>, node: (usize, usize)) -> Vec<(usize, usize)> {
     let mut neighbors = Vec::new();
     let (i, j) = node;
 
@@ -101,16 +86,8 @@ fn get_neighbors(field: &Vec<Vec<u32>>, node: (usize, usize)) -> Vec<(usize, usi
         neighbors.push((i, j + 1))
     }
 
-    // println!("neighbors: {:?}", neighbors);
-
     neighbors
         .into_iter()
-        .filter(|&(x, y)| field[node.0][node.1] as i32 - field[x][y] as i32 >= -1)
+        .filter(|&(x, y)| field[x][y] as i32 - field[node.0][node.1] as i32 <= 1)
         .collect()
-}
-
-fn print_field(field: &Vec<Vec<u32>>) {
-    for line in field {
-        println!("{:?}", line)
-    }
 }
