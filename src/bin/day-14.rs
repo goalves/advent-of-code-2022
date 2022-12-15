@@ -1,9 +1,8 @@
 use core::fmt;
-use std::ops::Range;
 
 fn main() {
-    // let input = include_str!("../../day14_input");
-    let input = include_str!("../../test_inputs/day14_test");
+    let input = include_str!("../../day14_input");
+    // let input = include_str!("../../test_inputs/day14_test");
 
     let rock_paths: Vec<Vec<RockPath>> = input
         .trim()
@@ -17,24 +16,84 @@ fn main() {
         })
         .collect();
 
-    let mut max_y: usize = 0;
+    let mut max_depth: usize = 0;
     for path in rock_paths.iter().flatten() {
-        if max_y < path.y as usize {
-            max_y = path.y as usize;
+        if max_depth < path.y as usize {
+            max_depth = path.y as usize;
         }
     }
 
-    let mut matrix = vec![vec![Place::None; 1000]; max_y + 1];
+    let mut matrix = vec![vec![Place::None; max_depth + 3]; 1000];
 
     for paths in rock_paths.iter() {
         let positions = positions_to_fill_for_paths(paths);
 
-        for (x, y) in positions {
-            matrix[y][x] = Place::Rock;
+        for (x, y) in positions.into_iter() {
+            matrix[x][y] = Place::Rock;
         }
     }
 
-    print_matrix(&matrix, 0, 9, 493, 504)
+    print_matrix(&matrix, 493, 504, 3, 9);
+
+    let sand_iterations = start_darude_sandstorm(&mut matrix, max_depth);
+    println!("Phase 1: {}", sand_iterations);
+
+    // phase 2, clear stuff and run again
+    for x in 0..matrix.len() {
+        for y in 0..matrix[0].len() {
+            if matrix[x][y] == Place::Sand {
+                matrix[x][y] = Place::None;
+            }
+        }
+    }
+
+    // setup cave ground
+    for x in 0..matrix.len() {
+        matrix[x][max_depth + 2] = Place::Rock;
+    }
+
+    let sand_iterations = start_darude_sandstorm(&mut matrix, max_depth + 3);
+    println!("Phase 2: {}", sand_iterations);
+}
+
+fn start_darude_sandstorm(matrix: &mut Vec<Vec<Place>>, max_depth: usize) -> usize {
+    let mut sand_iterations = 0;
+    loop {
+        sand_iterations += 1;
+        let mut sand_position: (usize, usize) = (500, 0);
+        while let Some(new_position) = calculate_new_sand_position(&sand_position, &matrix) {
+            if new_position.1 >= max_depth {
+                return sand_iterations - 1;
+            }
+
+            sand_position = new_position;
+        }
+
+        if sand_position == (500, 0) {
+            return sand_iterations;
+        }
+
+        matrix[sand_position.0][sand_position.1] = Place::Sand;
+    }
+}
+
+fn calculate_new_sand_position(
+    position: &(usize, usize),
+    matrix: &Vec<Vec<Place>>,
+) -> Option<(usize, usize)> {
+    if matrix[position.0][position.1 + 1] == Place::None {
+        return Some((position.0, position.1 + 1));
+    }
+
+    if matrix[position.0 - 1][position.1 + 1] == Place::None {
+        return Some((position.0 - 1, position.1 + 1));
+    }
+
+    if matrix[position.0 + 1][position.1 + 1] == Place::None {
+        return Some((position.0 + 1, position.1 + 1));
+    }
+
+    return None;
 }
 
 fn print_matrix(
@@ -44,8 +103,8 @@ fn print_matrix(
     y_start: usize,
     y_end: usize,
 ) {
-    for x in x_start..=x_end {
-        for y in y_start..=y_end {
+    for y in y_start..=y_end {
+        for x in x_start..=x_end {
             print!("{}", matrix[x][y])
         }
         println!()
@@ -104,7 +163,7 @@ impl From<&str> for RockPath {
     }
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq)]
 enum Place {
     None,
     Rock,
