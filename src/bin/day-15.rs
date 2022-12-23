@@ -1,11 +1,9 @@
-use std::fmt::Display;
-
 use itertools::Itertools;
 use regex::Regex;
 
 fn main() {
-    // let input = include_str!("../../day15_input");
-    let input = include_str!("../../test_inputs/day15_test");
+    let input = include_str!("../../day15_input");
+    // let input = include_str!("../../test_inputs/day15_test");
 
     let sensors: Vec<InputSensor> = input
         .trim()
@@ -14,165 +12,152 @@ fn main() {
         .map_into()
         .collect::<Vec<InputSensor>>();
 
-    let mut points_without_beacon = Vec::new();
+    let beacon_positions = sensors
+        .iter()
+        .map(|s| s.closest_beacon.clone())
+        .collect::<Vec<Point>>();
 
-    for sensor in &sensors {
-        points_without_beacon.push(points_without_a_beacon(&sensor, 10));
-    }
+    phase_1(&sensors, &beacon_positions, 2000000);
+    phase_2(&sensors, &beacon_positions, 4000000);
+}
 
-    for sensor in &sensors {
-        points_without_beacon.push(Points(vec![sensor.position.clone()]));
+fn phase_1(sensors: &Vec<InputSensor>, beacon_positions: &Vec<Point>, line_to_look: i64) {
+    let start = max_possible_x_in_direction(&sensors, -1);
+    let finish = max_possible_x_in_direction(&sensors, 1);
+
+    let mut current = start;
+    let mut number_of_impossible_beacon_positions = 0;
+    loop {
+        if current > finish {
+            break;
+        }
+
+        let current_point = Point {
+            x: current,
+            y: line_to_look,
+        };
+
+        if !point_can_have_a_beacon(&current_point, &sensors)
+            && !beacon_positions.contains(&current_point)
+        {
+            number_of_impossible_beacon_positions += 1;
+        };
+
+        current += 1;
     }
 
     println!(
-        "{}",
-        points_without_beacon
-            .clone()
-            .into_iter()
-            .reduce(|mut acc, el| {
-                for i in el.0.clone() {
-                    acc.0.push(i);
-                }
-                acc
-            })
-            .unwrap()
+        "Phase 1: Impossible beacons on {}th line: {}",
+        line_to_look, number_of_impossible_beacon_positions
     );
-
-    let beacons = sensors
-        .iter()
-        .map(|x| x.closest_beacon.clone())
-        .collect::<Vec<Point>>();
-
-    let count = points_without_beacon
-        .into_iter()
-        .flat_map(|x| x.0)
-        .filter(|x| x.y == 10 && !beacons.contains(x))
-        .unique()
-        .map(|x| {
-            println!("oi meu x: {:?}", x);
-            x
-        })
-        .count();
-
-    println!("Count at line 10: {}", count);
 }
 
-fn points_without_a_beacon(sensor: &InputSensor, line: i64) -> Points {
-    let m_dist_without_beacons = m_dist(&sensor.position, &sensor.closest_beacon);
-    let mut imposible_beacon_positions = vec![sensor.closest_beacon.clone()];
-    let mut x_dif: i64 = 0 - m_dist_without_beacons as i64;
+fn max_possible_x_in_direction(sensors: &Vec<InputSensor>, direction: i64) -> i64 {
+    sensors
+        .iter()
+        .map(|sensor| max_point_in_line_direction(sensor, direction))
+        .max_by(|x, y| {
+            if direction < 0 {
+                y.x.cmp(&x.x)
+            } else {
+                x.x.cmp(&y.x)
+            }
+        })
+        .unwrap()
+        .x
+}
+
+fn max_point_in_line_direction(sensor: &InputSensor, direction: i64) -> Point {
+    Point {
+        x: sensor.position.x + (direction * sensor.distance as i64) as i64,
+        ..sensor.position
+    }
+}
+
+fn point_can_have_a_beacon(point: &Point, matrix: &Vec<InputSensor>) -> bool {
+    for sensor in matrix {
+        let point_dist = m_dist(point, &sensor.position);
+        if point_dist <= sensor.distance {
+            return false;
+        }
+    }
+
+    true
+}
+
+fn m_dist(a: &Point, b: &Point) -> u64 {
+    ((a.x - b.x).abs() + (a.y - b.y).abs()) as u64
+}
+
+fn phase_2(sensors: &Vec<InputSensor>, beacon_positions: &Vec<Point>, max: i64) {
+    let mut edge_points = Vec::new();
+
+    for sensor in sensors {
+        let sensor_edges = sensor_edge_points(sensor);
+        edge_points.push(sensor_edges)
+    }
+
+    for point in edge_points
+        .iter()
+        .unique()
+        .flatten()
+        .filter(|point| point.x >= 0 && point.x <= max && point.y >= 0 && point.y <= max)
+    {
+        if point_can_have_a_beacon(&point, &sensors) && !beacon_positions.contains(&point) {
+            println!(
+                "Phase 2: {:?} with frequency: {}",
+                point,
+                point.x * 4000000 + point.y
+            );
+
+            return;
+        }
+    }
+
+    panic!("shouldn't ever not find a point :)")
+}
+
+fn sensor_edge_points(sensor: &InputSensor) -> Vec<Point> {
+    let mut edges = Vec::new();
+    let dist = sensor.distance as i64;
+
+    let mut x_diff = -dist - 1;
+    let mut y_diff = 0;
 
     loop {
-        let mut y_dif: i64 = (m_dist_without_beacons as i64 - x_dif.abs()).abs();
-        loop {
-            if sensor.position.y + y_dif == line || sensor.position.y - y_dif == line {
-                imposible_beacon_positions.push(Point {
-                    x: sensor.position.x + x_dif,
-                    y: sensor.position.y + y_dif,
-                    t: PointType::Nothing,
-                });
-                imposible_beacon_positions.push(Point {
-                    x: sensor.position.x + x_dif,
-                    y: sensor.position.y - y_dif,
-                    t: PointType::Nothing,
-                });
-            }
-
-            if y_dif == 0 {
-                break;
-            }
-
-            y_dif -= 1;
-        }
-
-        x_dif += 1;
-        if x_dif > m_dist_without_beacons as i64 {
+        if x_diff > 0 {
             break;
         }
+
+        edges.push(Point {
+            x: sensor.position.x + x_diff,
+            y: sensor.position.y + y_diff,
+        });
+        edges.push(Point {
+            x: sensor.position.x - x_diff,
+            y: sensor.position.y + y_diff,
+        });
+
+        edges.push(Point {
+            x: sensor.position.x + x_diff,
+            y: sensor.position.y - y_diff,
+        });
+        edges.push(Point {
+            x: sensor.position.x - x_diff,
+            y: sensor.position.y - y_diff,
+        });
+
+        y_diff += 1;
+        x_diff += 1;
     }
 
-    Points(imposible_beacon_positions)
-}
-
-#[derive(Debug, Clone)]
-struct Points(Vec<Point>);
-
-impl From<Points> for Vec<Point> {
-    fn from(value: Points) -> Self {
-        value.0
-    }
-}
-
-impl Display for Points {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        let mut output_string = String::new();
-        let mut x_start = i64::MAX;
-        let mut x_end = i64::MIN;
-        let mut y_start = i64::MAX;
-        let mut y_end = i64::MIN;
-
-        for element in &self.0 {
-            if element.x > x_end {
-                x_end = element.x;
-            }
-            if element.x < x_start {
-                x_start = element.x;
-            }
-
-            if element.y > y_end {
-                y_end = element.y;
-            }
-            if element.y < y_start {
-                y_start = element.y;
-            }
-        }
-
-        let base_info = format!(
-            "\nStarting on ({}, {}), finishing on: ({}, {})\n",
-            x_start, y_start, x_end, y_end
-        );
-        output_string.push_str(&base_info.to_owned());
-
-        for y in y_start..=y_end {
-            for x in x_start..=x_end {
-                if self.0.contains(&Point {
-                    y,
-                    x,
-                    t: PointType::Sensor,
-                }) {
-                    output_string.push_str("🖥️")
-                } else if self.0.contains(&Point {
-                    y,
-                    x,
-                    t: PointType::Beacon,
-                }) {
-                    output_string.push_str("❇️")
-                } else if self.0.contains(&Point {
-                    y,
-                    x,
-                    t: PointType::Nothing,
-                }) {
-                    output_string.push_str("❌")
-                } else {
-                    output_string.push_str("🪨")
-                }
-            }
-            output_string.push_str("\n");
-        }
-
-        write!(f, "{}", output_string)
-    }
-}
-
-fn m_dist(a: &Point, b: &Point) -> u32 {
-    ((a.x - b.x).abs() + (a.y - b.y).abs()) as u32
+    edges
 }
 
 #[derive(Debug, Hash, Clone)]
 struct Point {
     x: i64,
     y: i64,
-    t: PointType,
 }
 
 impl PartialEq for Point {
@@ -183,17 +168,11 @@ impl PartialEq for Point {
 
 impl Eq for Point {}
 
-#[derive(Debug, PartialEq, Eq, Clone, Hash)]
-enum PointType {
-    Beacon,
-    Sensor,
-    Nothing,
-}
-
 #[derive(Debug)]
 struct InputSensor {
     position: Point,
     closest_beacon: Point,
+    distance: u64,
 }
 
 impl From<&str> for InputSensor {
@@ -201,17 +180,22 @@ impl From<&str> for InputSensor {
         let re =
             Regex::new(r"x=(-?\d+), y=(-?\d+): closest beacon is at x=(-?\d+), y=(-?\d+)").unwrap();
         let caps = re.captures(value).unwrap();
+        let position = Point {
+            x: caps[1].parse().unwrap(),
+            y: caps[2].parse().unwrap(),
+        };
+
+        let closest_beacon = Point {
+            x: caps[3].parse().unwrap(),
+            y: caps[4].parse().unwrap(),
+        };
+
+        let distance = m_dist(&position, &closest_beacon);
+
         InputSensor {
-            position: Point {
-                x: caps[1].parse().unwrap(),
-                y: caps[2].parse().unwrap(),
-                t: PointType::Sensor,
-            },
-            closest_beacon: Point {
-                x: caps[3].parse().unwrap(),
-                y: caps[4].parse().unwrap(),
-                t: PointType::Beacon,
-            },
+            position,
+            closest_beacon,
+            distance,
         }
     }
 }
