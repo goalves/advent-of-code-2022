@@ -12,8 +12,8 @@ pub struct Monkey {
 }
 
 fn main() {
-    let input = include_str!("../../day11_input");
-    // let input = include_str!("../../test_inputs/day11_test");
+    let input = include_str!("../../inputs/day11");
+    // let input = include_str!("../../inputs/test/day11");
     let mut monkeys: Vec<Monkey> = build_monkeys(input);
 
     println!("{:?}", monkeys);

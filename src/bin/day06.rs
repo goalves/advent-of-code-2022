@@ -20,10 +20,10 @@ fn find_sequence(data: &str, expected_length: usize) -> usize {
 }
 
 fn main() {
-    let lenght_4 = find_sequence(include_str!("../../day6_input"), 4);
+    let lenght_4 = find_sequence(include_str!("../../inputs/day06"), 4);
     println!("{lenght_4}");
 
-    let length_14 = find_sequence(include_str!("../../day6_input"), 14);
+    let length_14 = find_sequence(include_str!("../../inputs/day06"), 14);
     println!("{length_14}");
 }
 

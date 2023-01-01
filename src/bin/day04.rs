@@ -52,7 +52,9 @@ impl From<&str> for ElfSection {
 }
 
 fn main() {
-    let elf_pairs = include_str!("../../day4_input").lines().map(ElfPair::from);
+    let elf_pairs = include_str!("../../inputs/day04")
+        .lines()
+        .map(ElfPair::from);
 
     let first_phase = elf_pairs
         .clone()
@@ -74,7 +76,7 @@ mod tests {
 
     #[test]
     fn first_half() {
-        let elf_pairs = include_str!("../../test_inputs/day4_test")
+        let elf_pairs = include_str!("../../inputs/test/day04")
             .lines()
             .map(|line| ElfPair::from(line))
             .collect::<Vec<ElfPair>>();
@@ -91,7 +93,7 @@ mod tests {
 
     #[test]
     fn second_half() {
-        let elf_pairs = include_str!("../../test_inputs/day4_test")
+        let elf_pairs = include_str!("../../inputs/test/day04")
             .lines()
             .map(|line| ElfPair::from(line))
             .collect::<Vec<ElfPair>>();

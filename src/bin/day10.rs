@@ -95,8 +95,8 @@ fn draw_crt(crt_index: &mut i32, sprite_index: &mut i32) {
 }
 
 fn main() {
-    let input = include_str!("../../day10_input");
-    // let input = include_str!("../../test_inputs/day10_test");
+    let input = include_str!("../../inputs/day10");
+    // let input = include_str!("../../inputs/test/day10");
     let commands: Vec<Command> = input.lines().map(Command::from).collect();
     let mut machine = Machine::new(commands);
 

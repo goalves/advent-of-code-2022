@@ -66,7 +66,8 @@ fn ceiling_map(list: &[i64; 7]) -> Vec<i64> {
 }
 
 // This has one issue: I only store the top of the landing height, which can lead to issues if there is any scneario
-// that a rock might have an upper bound but be pushed to a valid platform UNDER the top position
+// that a rock might have an upper bound but be pushed to a valid platform UNDER the top position.
+// To fix this properly I would need to actually store the full state of the cave instead of only the total height.
 fn fall_rocks(jets: &Vec<Jet>, target: usize) -> i64 {
     let mut landing_height = [0i64; 7];
     let mut jet_index = 0;
@@ -177,11 +178,11 @@ fn update_highest_landing(rock: &Rock, new_position: &(i64, i64), landing_height
 }
 
 fn main() {
-    let input = include_str!("../../day17_input").trim();
-    // let input = include_str!("../../test_inputs/day17_test").trim();
+    let input = include_str!("../../inputs/day17").trim();
+    // let input = include_str!("../../inputs/test/day17").trim();
     let jets: Vec<Jet> = parse_jets(input);
-    // let part_1 = fall_rocks(&jets, 2022);
-    // println!("Max height: {:?}", part_1);
+    let part_1 = fall_rocks(&jets, 2022);
+    println!("Max height: {:?}", part_1);
 
     let part_2 = fall_rocks(&jets, 1000000000000);
     println!("Max height: {:?}", part_2);

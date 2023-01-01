@@ -75,7 +75,7 @@ fn stack_tops(stacks: &mut Vec<Stack>) -> Vec<char> {
 }
 
 fn main() {
-    let mut data = include_str!("../../day5_input").split("\n\n");
+    let mut data = include_str!("../../inputs/day05").split("\n\n");
     let crate_lines = data.next().unwrap().lines();
     let move_lines = data.next().unwrap().lines();
 
@@ -87,7 +87,7 @@ fn main() {
     let tops = stack_tops(&mut stacks);
     println!("Normal Moves: {}", tops.into_iter().collect::<String>());
 
-    let mut data = include_str!("../../day5_input").split("\n\n");
+    let mut data = include_str!("../../inputs/day05").split("\n\n");
     let crate_lines = data.next().unwrap().lines();
     let move_lines = data.next().unwrap().lines();
 
@@ -133,7 +133,7 @@ mod test {
 
     #[test]
     fn test_phase_1() {
-        let mut test_data = include_str!("../../test_inputs/day5_test").split("\n\n");
+        let mut test_data = include_str!("../../inputs/test/day05").split("\n\n");
         let crate_lines = test_data.next().unwrap().lines();
         let move_lines = test_data.next().unwrap().lines();
 
@@ -148,7 +148,7 @@ mod test {
 
     #[test]
     fn test_phase_2() {
-        let mut test_data = include_str!("../../test_inputs/day5_test").split("\n\n");
+        let mut test_data = include_str!("../../inputs/test/day05").split("\n\n");
         let crate_lines = test_data.next().unwrap().lines();
         let move_lines = test_data.next().unwrap().lines();
 

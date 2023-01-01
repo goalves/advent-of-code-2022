@@ -2,8 +2,8 @@ use itertools::Itertools;
 use regex::Regex;
 
 fn main() {
-    let input = include_str!("../../day15_input");
-    // let input = include_str!("../../test_inputs/day15_test");
+    let input = include_str!("../../inputs/day15");
+    // let input = include_str!("../../inputs/test/day15");
 
     let sensors: Vec<InputSensor> = input
         .trim()

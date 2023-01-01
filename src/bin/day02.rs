@@ -1,5 +1,5 @@
 fn main() {
-    let part_1_result = include_str!("../../day2_input")
+    let part_1_result = include_str!("../../inputs/day02")
         .lines()
         .map(|line| match line {
             "A X" => 1 + 3,
@@ -17,7 +17,7 @@ fn main() {
 
     println!("{part_1_result}");
 
-    let part_two_result = include_str!("../../day2_input")
+    let part_two_result = include_str!("../../inputs/day02")
         .lines()
         .map(|line| match line {
             "A X" => 3,

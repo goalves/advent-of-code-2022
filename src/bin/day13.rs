@@ -1,6 +1,6 @@
 fn main() {
-    let input = include_str!("../../day13_input");
-    // let input = include_str!("../../test_inputs/day13_test");
+    let input = include_str!("../../inputs/day13");
+    // let input = include_str!("../../inputs/test/day13");
 
     let packet_pairs: Vec<Vec<Packet>> = input
         .split("\n\n")

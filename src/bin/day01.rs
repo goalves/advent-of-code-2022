@@ -1,5 +1,5 @@
 fn main() {
-    let mut results: Vec<u64> = include_str!("../../day1_input")
+    let mut results: Vec<u64> = include_str!("../../inputs/day01")
         .split("\n\n")
         .into_iter()
         .map(|calories_str| {

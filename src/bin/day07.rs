@@ -1,6 +1,6 @@
 fn main() {
-    let input = include_str!("../../day7_input");
-    // let input = include_str!("../../test_inputs/day7_test");
+    let input = include_str!("../../inputs/day07");
+    // let input = include_str!("../../inputs/test/day07");
 
     let mut folder_sizes = vec![("/", 0)];
     let mut final_folder_sizes = vec![];

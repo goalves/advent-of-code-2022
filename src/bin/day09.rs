@@ -1,8 +1,8 @@
 use itertools::Itertools;
 
 fn main() {
-    let input = include_str!("../../day9_input");
-    // let input = include_str!("../../test_inputs/day9_test");
+    let input = include_str!("../../inputs/day09");
+    // let input = include_str!("../../inputs/test/day09");
 
     //Phase 1 would be knot size 2
     let knot_size = 10;

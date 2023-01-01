@@ -134,7 +134,7 @@ fn calculate_scenic_score(data: &mut Vec<Vec<Tree>>) -> u32 {
 fn main() {
     let mut data = vec![];
 
-    let input = include_str!("../../day8_input").lines();
+    let input = include_str!("../../inputs/day08").lines();
 
     for line in input {
         let mut curr_vec = vec![];

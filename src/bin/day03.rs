@@ -109,7 +109,7 @@ fn calculate_badges_from_knapsacks(knapsacks: &[Knapsack]) -> Vec<Priority> {
 }
 
 fn main() {
-    let input_data = include_str!("../../day3_input");
+    let input_data = include_str!("../../inputs/day03");
     let knapsacks = build_knapsacks(input_data);
 
     let mut priorities: Vec<Priority> = find_repeated_from_knapsacks(&knapsacks);
@@ -131,7 +131,7 @@ mod tests {
 
     #[test]
     fn base_case() {
-        let test_data = include_str!("../../test_inputs/day3_test");
+        let test_data = include_str!("../../inputs/test/day03");
         let knapsacks = build_knapsacks(test_data);
 
         assert_eq!(knapsacks.len(), 6);
@@ -142,7 +142,7 @@ mod tests {
 
     #[test]
     fn second_half() {
-        let test_data = include_str!("../../test_inputs/day3_test");
+        let test_data = include_str!("../../inputs/test/day03");
         let knapsacks = build_knapsacks(test_data);
         assert_eq!(knapsacks.len(), 6);
 

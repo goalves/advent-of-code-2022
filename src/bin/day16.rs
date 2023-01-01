@@ -124,8 +124,8 @@ fn parse_valves(input: &str) -> Result<HashMap<String, Valve>, &'static str> {
 // }
 
 fn main() {
-    // let input = include_str!("../../day16_input");
-    let input = include_str!("../../test_inputs/day16_test");
+    // let input = include_str!("../../inputs/day16");
+    let input = include_str!("../../inputs/test/day16");
     let valves = parse_valves(input).unwrap();
     let mut cache = HashMap::new();
 

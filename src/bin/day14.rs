@@ -1,8 +1,8 @@
 use core::fmt;
 
 fn main() {
-    let input = include_str!("../../day14_input");
-    // let input = include_str!("../../test_inputs/day14_test");
+    let input = include_str!("../../inputs/day14");
+    // let input = include_str!("../../inputs/test/day14");
 
     let rock_paths: Vec<Vec<RockPath>> = input
         .trim()

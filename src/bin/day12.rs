@@ -3,8 +3,8 @@ use std::collections::{HashSet, VecDeque};
 use itertools::Itertools;
 
 fn main() {
-    let input = include_str!("../../day12_input");
-    // let input = include_str!("../../test_inputs/day12_test");
+    let input = include_str!("../../inputs/day12");
+    // let input = include_str!("../../inputs/test/day12");
 
     let mut starting_point = (0, 0);
     let mut finish_point = (0, 0);
